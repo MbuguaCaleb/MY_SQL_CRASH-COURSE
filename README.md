@@ -99,3 +99,139 @@ This you can also have table joins where you query fro
 
 
 ```
+
+# QUERIES
+
+```
+(a)MySQL When stored is stored in a particular path..(linux /var/.......)
+
+(b)IT IS A COMMON COVENTION TO USE CAPS FOR THE QUERIES...ITS BETTER..(FOR READABILITY)
+
+
+```
+
+**LogIn**
+
+```
+mysql -u root -p
+```
+
+**CREATEUSER**
+
+```
+CREATE USER 'someuser'@'localhost' IDENTIFIED BY 'somepassword';
+
+```
+
+**Show Users**
+
+```
+
+SELECT user, host FROM mysql.user;
+
+```
+
+**Grant All Priveleges On All Databases**
+
+```
+
+GRANT ALL PRIVILEGES ON * . * TO 'caleb'@'localhost';
+
+FLUSH PRIVILEGES;
+
+
+Flush privildedges clears the grants table and should be done when you assign priviledges.
+
+```
+
+**Show Grants**
+
+```
+SHOW GRANTS FOR 'someuser'@'localhost';
+
+
+```
+
+**Remove Grants**
+
+```
+REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'someuser'@'localhost';
+
+```
+
+**DeleteUser**
+
+```
+DROP USER 'someuser'@'localhost';
+
+```
+
+**Exit**
+
+```
+exit
+```
+
+**Create Database**
+
+```
+CREATE DATABASE acme;
+
+```
+
+**Show Databases**
+
+```
+SHOW DATABASES
+
+```
+
+**SELECT DATABASE**
+
+```
+USE acme;
+
+```
+
+**CREATE A TABLE**
+
+```
+CREATE TABLE users(
+id INT AUTO_INCREMENT,
+first_name VARCHAR(100),
+last_name VARCHAR(100),
+email VARCHAR(50),
+password VARCHAR(20),
+location VARCHAR(100),
+dept VARCHAR(100),
+is_admin TINYINT(1),
+register_date DATETIME,
+PRIMARY KEY(id)
+);
+
+```
+
+**SHOW TABLES**
+
+```
+
+SHOW TABLES;
+
+```
+
+**DELETE OR DROP TABLE**
+
+```
+DROP TABLE tablename;
+
+```
+
+**INSERT ROW /RECORD**
+
+```
+
+
+INSERT INTO users (first_name, last_name, email, password, location, dept, is_admin, register_date) values ('Brad', 'Traversy', 'brad@gmail.com', '123456','Massachusetts', 'development', 1, now());
+
+
+```
