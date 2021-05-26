@@ -425,7 +425,7 @@ WHERE last_name REGEXP '[a-h]e';
 
 ```
 
-**Exercice**
+**Exercise**
 
 ```
 -- GET CUSTOMERS WHOSE FIRST NAME ARE ELKA OR AMBUR
@@ -449,5 +449,451 @@ FROM
 WHERE
     last_name REGEXP 'B[RU]'
 
+
+```
+
+**Fetching Null records**
+
+```
+
+SELECT * FROM customers
+WHERE phone IS NULL;
+
+
+NEGATING
+
+SELECT * FROM customers
+WHERE phone IS NOT NULL
+
+
+SELECT * FROM orders
+WHERE shipper_id IS NULL;
+
+```
+
+**SORTING COLUMNS VIA ORDER BY**
+
+```
+SELECT *
+FROM customers
+ORDER BY first_name;
+
+-- SORT IN DESCENDING ORDER
+
+SELECT *
+FROM customers
+ORDER BY first_name
+DESC;
+
+-- SORT BY TWO COLUMNS
+SELECT *
+FROM customers
+ORDER BY state ,first_name
+DESC;
+
+-- The above will fisrst order by the state and then
+-- the first_name
+
+-- In MySQL you can order by a column thats not in your
+-- select query unlike other databases which thrown an error cause
+-- of this
+
+SELECT first_name,last_name
+FROM customers
+ORDER BY birth_date
+DESC;
+
+-- We can as well order data from an ALIAS
+SELECT first_name,last_name, 10*3 AS points
+FROM customers
+ORDER BY points, birth_date
+DESC;
+
+-- We may as well order from an arithmetic expression
+
+SELECT order_id,product_id,quantity,unit_price,
+(quantity*unit_price) as total_price
+FROM order_items
+WHERE order_id=2
+ORDER BY total_price DESC;
+
+SELECT order_id,product_id,quantity,unit_price
+FROM order_items
+WHERE order_id=2
+ORDER BY (quantity*unit_price)
+DESC;
+
+
+SELECT * ,
+(quantity*unit_price) as total_price
+FROM order_items
+WHERE order_id=2
+ORDER BY total_price DESC;
+
+```
+
+```
+
+SELECT * FROM customers
+LIMIT 3;
+
+-- IF LIMIT IS GREATER THAN THE NO OF RECORDS
+-- RETURNED THE QUERY RETURNS ALL ROCORDS
+SELECT * FROM customers
+LIMIT 300;
+
+-- aDDING AN OFFSET
+-- SKIP THE FIRST 6 RECORDS THEN PICK NEXT THREE
+SELECT * FROM customers
+LIMIT 6,3;
+
+-- NOTICE THE LIMIT CLAUSE MUST ALWAYS COME AT THE END
+SELECT * FROM customers
+ORDER BY points DESC
+LIMIT 3;
+
+```
+
+**Inner JOins**
+
+```
+Help us select data from mulitple tables
+
+```
+
+```
+-- JOIN AS THE WORD SUGGESTS JOINS THE TABLES
+SELECT order_id,orders.customer_id, first_name,last_name FROM orders
+INNER
+JOIN customers
+	 ON orders.customer_id = customers.customer_id;
+
+-- I MAY OMIT INNER ANFD JUST WRITE JOIN
+SELECT order_id,orders.customer_id, first_name,last_name FROM orders
+JOIN customers
+	 ON orders.customer_id = customers.customer_id;
+
+--IF A COLUMN HAS THE SAME NAME IN BOTH TABLES I MUST PREFIX IT WITH
+THE TABLE NAME WHEN MAKING SELECT
+
+-- --ADDING AN ALIAS
+SELECT order_id,o.customer_id, first_name,last_name
+FROM orders o
+JOIN customers c
+	 ON o.customer_id = c.customer_id;
+
+
+```
+
+```
+SELECT order_id,p.name,oi.quantity,oi.unit_price FROM
+order_items oi
+JOIN products p
+     ON oi.order_id = p.product_id
+ORDER BY order_id DESC;
+
+
+
+```
+
+**Joining Across Databases**
+
+```
+-- JOINING ACROSS DATABASES
+USE sql_inventory;
+
+SELECT *
+FROM sql_store.order_items oi
+JOIN products p
+ON oi.product_id = p.product_id;
+
+
+```
+
+**Self Joins**
+
+```
+I query a table from Itself if there is related data
+
+-- Helps me Join data from the same table
+USE sql_hr;
+
+SELECT * FROM
+employees e
+JOIN employees m
+     ON e.reports_to =m.employee_id;
+
+
+SELECT
+e.employee_id,
+e.first_name,
+m.first_name as manager
+FROM
+employees e
+JOIN employees m
+     ON e.reports_to =m.employee_id
+
+Joining a table by itself is JUST Like the other joins.
+The only difference being i call the same tables twice
+but with a differenct prefix.
+
+
+
+```
+
+**JOINING WITH MORE THAN ONE TABLE**
+
+```
+-- //I am Joining Orders to the statuses and customer tables
+-- When Joining tables i must join them by virtue of the key relationships
+-- When i JOin everything becomes like one table.The only place i must referene
+-- with table alias on select is when i have duplicate columns
+use sql_store;
+
+SELECT
+   o.order_id,
+   o.order_date,
+   c.first_name,
+   c.last_name,
+   os.name AS status
+FROM orders o
+JOIN customers c
+     ON o.customer_id = c.customer_id
+JOIN order_statuses os
+     ON o.status = os.order_status_id;
+
+
+USE sql_invoicing;
+
+SELECT c.name as client_name,pm.name as payment_method
+FROM payments p
+JOIN clients c
+ON p.client_id = c.client_id
+JOIN payment_methods pm
+ON p.payment_method = pm.payment_method_id
+
+```
+
+**Compoud Join Conditions**
+
+```
+There tables that lack  a primary key
+and can uniquely be queried by a combination of two keys.
+
+A table that has two primary keys is known as a composite primary key.
+
+Tables that can be idenfied/related by two unique columns and not only one.
+
+Sample SQL
+
+SELECT *
+FROM order_items oi
+JOIN order_item_notes oin
+     ON oi.order_id=oin.order_id
+     AND oi.product_id=oin.product_id
+
+
+Tables that may be related by 2 keys
+
+
+```
+
+**Implicit Join Syntax**
+
+```
+-- Traditional way to write a Join
+SELECT *
+FROM orders o
+JOIN customers c
+     ON o.customer_id=c.customer_id;
+
+-- Implicit Join SYNTAX
+-- This is another way to write a join
+-- I begin by declaring my tables first
+
+SELECT *
+FROM orders o,customers c
+WHERE o.customer_id=c.customer_id
+
+The implicit join should however be avoided because it
+leads to a cross join should one forget to include the WHERE clause
+
+A cross join is where data from one table is appended onto another
+regardless of the condition.
+
+
+```
+
+**REMEBER!!!!!!!Important**
+
+```
+
+Whenever you write join without stating whether its an inner or outer join,
+it is automatucally regarded as an inner join....
+
+Its is adivsable to exlpicitly do your selects,
+
+
+SELECT
+  c.customer_id,
+  c.first_name,
+  o.order_id
+FROM customers c
+JOIN orders o
+    ON c.customer_id = o.customer_id
+
+
+
+```
+
+**Outer Joins**
+
+```
+-- Innerjoin exculudes all data that does not meet the condition
+
+SELECT
+  c.customer_id,
+  c.first_name,
+  o.order_id
+FROM customers c
+JOIN orders o
+    ON c.customer_id = o.customer_id
+ORDER BY c.customer_id;
+
+-- The above will excude any customer who does not have an order
+
+-- What if i  want to return all the customers regardless to whether or
+-- not they have an order?
+
+-- I use an outer join
+
+
+-- There are two types of outer joins:
+
+-- (a)Left JOIN(shortcut of LEFT OUTER JOIN)
+
+  --   RETURNS ALL DATA FROM THE TABLE ON THE LEFT REGARDLESS OF THE CONDITION
+-- (b)RIGHT JOIN(shortcut of right Inner Join)
+--   RETURNS ALL DATA FROM THE TABLE ON THE RIGHT REGARDLESS OF THE CONDITION
+
+SELECT
+  c.customer_id,
+  c.first_name,
+  o.order_id
+FROM customers c
+LEFT JOIN orders o
+    ON c.customer_id = o.customer_id
+ORDER BY c.customer_id;
+
+-- THE ABOVE RETURNS ALL THE CUSTOMERS EVEN IF THEY DO NOT HAVE AN ORDER
+
+SELECT
+  c.customer_id,
+  c.first_name,
+  o.order_id
+FROM customers c
+RIGHT JOIN orders o
+    ON c.customer_id = o.customer_id
+ORDER BY c.customer_id;
+
+-- THE ABOVE WILL RETURN ALL THE ORDERS REGARDLESS
+
+
+SELECT
+  c.customer_id,
+  c.first_name,
+  o.order_id
+FROM  orders o
+RIGHT JOIN customers c
+    ON c.customer_id = o.customer_id
+ORDER BY c.customer_id;
+
+-- Table on the right is table 2 always
+-- table on left is table one always
+
+
+```
+
+**Outer Join exercise**
+
+```
+-- products name,id and quanity
+-- return a product with no quantiteis as well
+
+SELECT
+  p.product_id,
+  p.name,
+  oi.quantity
+FROM products p
+LEFT JOIN order_items oi
+     ON p.product_id = oi.product_id;
+
+
+
+SELECT
+  p.product_id,
+  p.name,
+  oi.quantity
+FROM order_items oi
+RIGHT JOIN products p
+     ON p.product_id = oi.product_id;
+
+
+```
+
+**Outer Joins From Multiple tables**
+
+```
+
+SELECT
+  c.customer_id,
+  c.first_name,
+  o.order_id,
+  sh.name as shipper_name
+FROM  orders o
+RIGHT JOIN customers c
+    ON c.customer_id = o.customer_id
+LEFT JOIN shippers sh
+    ON sh.shipper_id = o.shipper_id
+ORDER BY c.customer_id;
+
+-- As best practice it is good to use the left join
+-- It is easier to interpret
+
+SELECT
+  c.customer_id,
+  c.first_name,
+  o.order_id,
+  sh.name as shipper_name
+FROM  customers c
+LEFT JOIN orders o
+    ON c.customer_id = o.customer_id
+LEFT JOIN shippers sh
+    ON sh.shipper_id = o.shipper_id
+ORDER BY c.customer_id;
+
+
+```
+
+**OUTER JOIN EXERCISE**
+
+```
+SELECT
+   o.order_date,
+   o.order_id,
+   c.first_name,
+   sh.name AS shipper,
+   st.name AS status
+FROM orders o
+JOIN customers c
+   ON o.customer_id = c.customer_id
+JOIN order_statuses st
+   ON st.order_status_id=o.status
+LEFT JOIN shippers sh
+   ON o.shipper_id =sh.shipper_id
+
+
+-- Whenever i have no null data it means i have made an inner join
+-- Whenever i have null data it means i have made an outer join.
 
 ```
