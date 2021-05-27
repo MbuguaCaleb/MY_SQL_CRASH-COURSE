@@ -1012,6 +1012,9 @@ We use a CROSS JOIN TO JOIN EVERY RECORD FROM THE FIRST TABLE TO EVERY RECORD IN
 
 A cross Join therefore does not have a condition
 
+It gives me a result with all the combnations for instance.
+
+
 USE sql_store;
 
 SELECT
@@ -1054,5 +1057,115 @@ SELECT
  FROM shippers sh
 CROSS JOIN products p
 ORDER BY sh.name
+
+```
+
+**UNIONS**
+
+```
+JOINS HELP US COMBINE COLUMNS FROM MULTIPLE TABLES
+
+UNIONS ON THE OTHER HAND HELP US COMBINE ROWS FROM MULTIPLE TABLES
+
+THROUGH UNION OPERATOR WE ARE ABLE TO COMBINE RECORDS FROM MULTIPLE QUERIES
+INTO ONE RESULT SET.
+
+
+USE sql_store;
+
+RESULT SET ONE
+
+SELECT
+    order_id,
+    order_date,
+    'Active' as status
+FROM orders
+WHERE order_date >='2019-01-01';
+
+
+RESULT SET TWO
+
+SELECT
+    order_id,
+    order_date,
+    'Archived' as status
+FROM orders
+WHERE order_date <'2019-01-01';
+
+
+A UNION COMES IN WHEN I WANT TO COMBINE DATA FROM TWO RESULT SETS
+
+USE sql_store;
+
+SELECT
+    order_id,
+    order_date,
+    'Active' as status
+FROM orders
+WHERE order_date >='2019-01-01'
+UNION
+SELECT
+    order_id,
+    order_date,
+    'Archived' as status
+FROM orders
+WHERE order_date <'2019-01-01';
+
+
+We may as well combine data  from different tables into one result set.
+
+N.B
+
+FOR A UNION to work the number of rows returned by each query should
+be the same otherwise MYSQL will not know how to combine this data.
+
+
+The table columns name in returned from a union are the column
+names of the first result set.
+
+The second result set takes those names to the the names of their
+columns.
+
+I may therore rename the columns via an alias to make them agreeable to
+my dataset
+
+
+```
+
+**EXERCISE**
+
+```
+UNIONS MOSTLY COMBINE DATA FROM A DIFFERENT RESULT SET.
+
+
+-- <2000 points=bronze
+-- 2000-3000-Silver
+-- 3000 POINTS > GOLD CUSTOMERS
+
+SELECT 
+ customer_id,
+ first_name,
+ points,
+ 'Bronze' AS type
+FROM customers 
+WHERE points <2000
+UNION
+SELECT 
+ customer_id,
+ first_name,
+ points,
+ 'Silver'
+FROM customers 
+WHERE points BETWEEN 2000 AND 3000
+UNION
+SELECT 
+ customer_id,
+ first_name,
+ points,
+ 'Gold'
+FROM customers 
+WHERE points > 3000
+ORDER BY first_name  ASC
+
 
 ```
