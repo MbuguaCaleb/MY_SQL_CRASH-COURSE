@@ -897,3 +897,162 @@ LEFT JOIN shippers sh
 -- Whenever i have null data it means i have made an outer join.
 
 ```
+
+**Self Outer Join**
+
+```
+
+USE sql_hr;
+
+SELECT
+   e.employee_id,
+   e.first_name,
+   e.job_title,
+   m.first_name as manager
+FROM employees e
+LEFT JOIN employees m
+     ON e.reports_to = m.employee_id
+
+WITH A INNER JOIN IT WILL ONLY RETURN EMPLOYEES WITH A MANANAGER
+
+```
+
+**USING CLAUSE**
+
+```
+
+Whenever the column names you are joining are the same you
+may replace ON condition with USING in your join.
+
+USE sql_store;
+
+SELECT
+    o.order_id,
+    c.first_name
+FROM orders o
+JOIN customers c
+--     ON o.customer_id=c.customer_id
+	USING(customer_id)
+
+USE sql_store;
+
+SELECT
+    o.order_id,
+    c.first_name,
+    sh.name as shipper
+FROM orders o
+JOIN customers c
+	USING(customer_id)
+LEFT JOIN shippers sh
+    USING(ship
+
+
+
+Simlifying a table with a composite primary key with Using
+
+SELECT *
+FROM order_items oi
+JOIN order_item_notes oin
+     ON oi.order_id=oin.order_id AND
+        oi.product_id=oin.product_id;
+
+        SELECT *
+FROM order_items oi
+JOIN order_item_notes oin
+      USING(order_id,product_id);
+
+```
+
+**USING EXERCISE**
+
+```
+wheh i am using the USING CLAUSE I MUST
+Make sure that the tables i am relation share
+the same column name,Otherwise i must use ON
+
+USE sql_invoicing;
+
+SELECT
+     p.date,
+     c.name as client,
+     p.amount
+FROM payments p
+JOIN clients c
+     USING(client_id)
+JOIN payment_methods pm
+     ON pm.payment_method_id = p.payment_method
+
+```
+
+**NATURAL JOINS**
+
+```
+Easier to code but not recommended because it at times produces unexpected results.
+
+IN a NATURAL JOin you do not have to manaully write the condition but the database
+will examine which columns are similar on you behalf and do a JOIN for you.
+
+USE sql_store;
+
+
+SELECT
+  o.order_id,
+  c.first_name
+FROM
+orders o
+NATURAL JOIN customers c
+
+
+```
+
+**CROSS JOINS**
+
+```
+We use a CROSS JOIN TO JOIN EVERY RECORD FROM THE FIRST TABLE TO EVERY RECORD IN THE SECOND TABLE
+
+A cross Join therefore does not have a condition
+
+USE sql_store;
+
+SELECT
+  c.first_name AS customer,
+  p.name AS product
+FROM customers c
+CROSS JOIN products p
+ORDER BY c.first_name;
+
+-- The above query will bring all the combinations
+-- of customers with products
+-- The above is the explicit syntax of a cross JOIN
+
+-- WE MAY ALSO WRITE A JOIN IMPLICITLY AS SHOWN
+-- BELOW WHICH IS NOT RECOMMENDED
+
+SELECT
+  c.first_name AS customer,
+  p.name AS product
+FROM customers c, products p
+ORDER BY c.first_name
+
+```
+
+**CROSS JOIN EXERCISE**
+
+```
+-- Implicit cross JOIN (UNRECOMMEDNED)
+SELECT
+  sh.name as shipper,
+  p.name as  product
+FROM shippers sh, products p
+ORDER BY sh.name;
+
+-- expicit(Recommended)
+
+SELECT
+  sh.name as shipper,
+  p.name as  product
+ FROM shippers sh
+CROSS JOIN products p
+ORDER BY sh.name
+
+```
