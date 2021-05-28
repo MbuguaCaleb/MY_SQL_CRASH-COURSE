@@ -1142,30 +1142,137 @@ UNIONS MOSTLY COMBINE DATA FROM A DIFFERENT RESULT SET.
 -- 2000-3000-Silver
 -- 3000 POINTS > GOLD CUSTOMERS
 
-SELECT 
+SELECT
  customer_id,
  first_name,
  points,
  'Bronze' AS type
-FROM customers 
+FROM customers
 WHERE points <2000
 UNION
-SELECT 
+SELECT
  customer_id,
  first_name,
  points,
  'Silver'
-FROM customers 
+FROM customers
 WHERE points BETWEEN 2000 AND 3000
 UNION
-SELECT 
+SELECT
  customer_id,
  first_name,
  points,
  'Gold'
-FROM customers 
+FROM customers
 WHERE points > 3000
 ORDER BY first_name  ASC
 
+
+```
+
+**INSERTING A SINGLE ROW**
+
+---
+
+DEFAULT
+UNIQUE
+NOT NULL
+AUTO INCEREMENT
+PRIMARY KEY
+FOREIGH KEY
+\*\*
+
+```
+INSERT INTO customers(first_name,last_name,birth_date,address,city,state)
+VALUES ('CALEB','MBUGUA','1995-08-28','KABATI','NAIVASHA','LA')
+
+```
+
+**INSERTING MULTIPLE ROWS IN ONE GO**
+
+```
+
+INSERT INTO shippers(name)
+VALUES ('shipper1'),
+       ('shipper2'),
+       ('shipper3')
+
+
+```
+
+**INSERTING HEIRACHICAL DATA IN MYSQL**
+
+```
+
+I can be able to ge the last inserted ID VIA MYSQL
+
+SELECT LAST_INSERT_ID()
+
+Let say i want to insert the order ID FROM TABLE X TO TABLE Y ITS CHILD.
+
+
+I CAN DO THIS DIRECTLY .
+
+
+INSERT INTO orders(customer_id,order_date,status)
+VALUES(1,'2021-05-28',1);
+
+INSERT INTO order_items
+VALUES
+  (LAST_INSERT_ID(),1,1,2.95),
+   (LAST_INSERT_ID(),4,4,7.95)
+
+
+THIS IS THE CORRECT WAY TO DO IT INSTEAD OF WRITING ANOTHER QUERY TO GET THE MAXIMUM ID.
+
+
+```
+
+**CREATING A COPY OF A TABLE**
+
+```
+CREATE TABLE orders_archived
+SELECT * FROM orders
+
+IN copied table primary key constraint is not applied and i must apply it manually.
+
+The second query is known as a sub-query
+
+A sub query is a select statement that is part of another SQL Statement.
+
+We can also use a SUB QUERY IN AN INSERT STATEMENT WHICH IS A VERY POWERFUL THING
+
+
+THIS IS WHAT WE CALL A SELECT INSERT
+
+INSERT INTO orders_archived
+SELECT *
+FROM orders
+WHERE order_date <'2019-01-01'
+
+
+```
+
+**SUBQUERIES EXERECISE**
+
+```
+
+USE sql_invoicing;
+CREATE TABLE invoices_archived_two
+SELECT
+i.invoice_id,
+c.name as client_name,
+i.invoice_total,
+i.payment_total,
+i.invoice_date,
+i.payment_date
+ FROM invoices i
+JOIN clients c
+     USING(client_id)
+WHERE i.payment_date IS NOT NULL
+
+
+It is good practice to go fully explicit with My Joins.
+The table will be created and records Inserted.
 
 ```
